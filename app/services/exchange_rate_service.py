@@ -4,59 +4,61 @@ from datetime import date
 
 from ..models import exchange_rate_model
 from ..schemas import exchange_rate_schemas
+from .base_service import BaseService
 
 
-def create_exchange_rate(db: Session, exchange_rate: exchange_rate_schemas.ExchangeRateDb) -> exchange_rate_model.ExchangeRateModel:
-    db_exchange_rate = exchange_rate_model.ExchangeRateModel(
-        **exchange_rate.dict())
+class ExchangeRateService(BaseService):
+    def __init__(self, db: Session) -> exchange_rate_model.ExchangeRateModel:
+        self.db = db
 
-    db.add(db_exchange_rate)
-    db.commit()
-    db.refresh(db_exchange_rate)
+    def create(self, model: exchange_rate_schemas.ExchangeRateDb) -> exchange_rate_model.ExchangeRateModel:
+        db_exchange_rate = exchange_rate_model.ExchangeRateModel(
+            **model.dict())
 
-    return db_exchange_rate
+        self.db.add(db_exchange_rate)
+        self.db.commit()
+        self.db.refresh(db_exchange_rate)
 
+        return db_exchange_rate
 
-# -> list(exchange_rate_model.ExchangeRateModel):
-def get_exchange_rates(db: Session, page: int = 1, limit: int = 100, search: str = None, date_from: date = None, date_to: date = None):
-    query = db.query(exchange_rate_model.ExchangeRateModel)
+    def find(self, id: int) -> exchange_rate_model.ExchangeRateModel:
+        db_exchange_rate = self.db.query(exchange_rate_model.ExchangeRateModel).filter(
+            exchange_rate_model.ExchangeRateModel.id == id).first()
 
-    if search:
-        query = query.filter(or_(exchange_rate_model.ExchangeRateModel.currency.contains(
-            search), exchange_rate_model.ExchangeRateModel.rate.contains(search)))
+        return db_exchange_rate
 
-    if date_from:
-        query = query.filter(
-            exchange_rate_model.ExchangeRateModel.date >= date_from)
+    def find_all(self, page: int = 1, limit: int = 100, search: str = None, date_from: date = None, date_to: date = None):
+        query = self.db.query(exchange_rate_model.ExchangeRateModel)
 
-    if date_to:
-        query = query.filter(
-            exchange_rate_model.ExchangeRateModel.date <= date_to)
+        if search:
+            query = query.filter(or_(exchange_rate_model.ExchangeRateModel.currency.contains(
+                search), exchange_rate_model.ExchangeRateModel.rate.contains(search)))
 
-    return query.offset((page - 1) * limit).limit(limit).all()
+        if date_from:
+            query = query.filter(
+                exchange_rate_model.ExchangeRateModel.date >= date_from)
 
+        if date_to:
+            query = query.filter(
+                exchange_rate_model.ExchangeRateModel.date <= date_to)
 
-def get_exchange_rate(db: Session, id: int) -> exchange_rate_model.ExchangeRateModel:
-    return db.query(exchange_rate_model.ExchangeRateModel).filter(exchange_rate_model.ExchangeRateModel.id == id).first()
+        return query.offset((page - 1) * limit).limit(limit).all()
 
+    def update(self, model: exchange_rate_model.ExchangeRateModel, model_data: exchange_rate_model.ExchangeRateModel) -> bool:
+        self.db.query(exchange_rate_model.ExchangeRateModel).filter(
+            exchange_rate_model.ExchangeRateModel.id == model.id).update(model_data.dict())
+        self.db.commit()
+        self.db.refresh(model)
 
-def update_exchange_rate(db: Session, exchange_rate_db: exchange_rate_model.ExchangeRateModel, exchange_rate_data: exchange_rate_model.ExchangeRateModel) -> bool:
-    db.query(exchange_rate_model.ExchangeRateModel).filter(
-        exchange_rate_model.ExchangeRateModel.id == exchange_rate_db.id).update(exchange_rate_data.dict())
-    db.commit()
-    db.refresh(exchange_rate_db)
+        return model
 
-    return exchange_rate_db
+    def delete(self, model: exchange_rate_model.ExchangeRateModel) -> bool:
+        self.db.delete(model)
+        self.db.commit()
 
+        return model
 
-def delete_exchange_rate(db: Session, exchange_rate: exchange_rate_model.ExchangeRateModel) -> bool:
-    db.delete(exchange_rate)
-    db.commit()
+    def get_count_all(self) -> int:
+        query = self.db.query(exchange_rate_model.ExchangeRateModel)
 
-    return exchange_rate
-
-
-def get_exchange_rates_amount(db: Session) -> int:
-    query = db.query(exchange_rate_model.ExchangeRateModel)
-
-    return query.with_entities(func.count()).scalar()
+        return query.with_entities(func.count()).scalar()

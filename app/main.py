@@ -1,10 +1,9 @@
 from app.dependencies import get_db
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
-import os
 import time
-import imp
+from decouple import config
 
 from .database import Base, engine
 from .config import cors
@@ -16,7 +15,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 scheduler = BackgroundScheduler()
 scheduler.add_job(
-    get_exchange_rates_job.get_actual_exchange_rates, 'interval', seconds=3600)
+    get_exchange_rates_job.get_actual_exchange_rates, 'interval', seconds=int(config('JOB_INTERVAL')))
 
 try:
     scheduler.start()

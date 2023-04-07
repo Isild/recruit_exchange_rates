@@ -5,7 +5,7 @@ from ..database import Base
 
 
 class ExchangeRateModel(Base):
-    __tablename__ = "expenditures"
+    __tablename__ = "exchange_rates"
 
     id = Column(Integer, primary_key=True, index=True)
     # I use this kind of column when I want to add extra secure for data to avoid
