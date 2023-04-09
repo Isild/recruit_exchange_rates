@@ -20,3 +20,12 @@ Run command
 ```
 uvicorn app.main:app --reload
 ```
+
+Application runs with CORS for origins below which you can change in `cors.py` if needed
+
+```
+"http://localhost",
+"http://localhost:8080",
+"http://127.0.0.1",
+"http://127.0.0.1:8080",
+```
