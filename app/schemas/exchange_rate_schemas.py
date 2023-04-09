@@ -4,9 +4,27 @@ from typing import List
 
 
 class ExchangeRateBase(BaseModel):
-    rate: float = Field(
-        title="The currency exchange rate",
-        description="The currency exchange rate being in given date",
+    eur: float = Field(
+        title="The EUR currency exchange rate",
+        description="The EUR currency exchange rate being in given date",
+        eq=0,
+        example=2.137001,
+    )
+    usd: float = Field(
+        title="The USD currency exchange rate",
+        description="The USD currency exchange rate being in given date",
+        eq=0,
+        example=2.137001,
+    )
+    jpy: float = Field(
+        title="The JPY currency exchange rate",
+        description="The JPY currency exchange rate being in given date",
+        eq=0,
+        example=2.137001,
+    )
+    gbp: float = Field(
+        title="The GBP currency exchange rate",
+        description="The GBP currency exchange rate being in given date",
         eq=0,
         example=2.137001,
     )
@@ -14,13 +32,6 @@ class ExchangeRateBase(BaseModel):
         title="The date time",
         description="The date time of the exchange rate storaging in UTC",
         example="2022-11-06 12:00",
-    )
-    currency: str = Field(
-        title="The currency",
-        description="The name of the expenditure",
-        min_length=3,
-        max_length=3,
-        example="Name",
     )
 
     class Config:

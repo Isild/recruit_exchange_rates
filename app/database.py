@@ -6,7 +6,8 @@ from decouple import config
 SQLALCHEMY_DATABASE_URL = config('DATABASE_URL')
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    # SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False} for SQLite
+    SQLALCHEMY_DATABASE_URL, connect_args={}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
