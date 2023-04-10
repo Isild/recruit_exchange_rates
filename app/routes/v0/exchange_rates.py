@@ -32,6 +32,13 @@ def store_exchange_rate(exchange_rate: exchange_rate_schemas.ExchangeRate, db: S
 @router.get('/exchange-rates/', status_code=status.HTTP_200_OK, tags=["exchange-rates"])
 def index_exchange_rate_grouped(page: int = 1, limit: int = 100, search: str = None, date_from: date = None, date_to: date = None, order_by: str = "ASC", last_hour: bool = False, db: Session = Depends(get_db)) -> exchange_rate_schemas.ExchangeRate:
     controller = ExchangeRateController(db=db)
+    today = date.today()
+
+    if date_from > today:
+        date_from = today
+
+    if date_to > today:
+        date_from = today
 
     return controller.index(page=page, limit=limit, search=search, date_from=date_from, date_to=date_to, order_by=order_by, last_hour=last_hour)
 
