@@ -14,6 +14,9 @@ services:
       - DATABASE_URL=mysql+pymysql://root:example@db:3306/dev?charset=utf8mb4
     depends_on:
       - db
+    networks:
+      - testing-network
+      - service-network
   
   db:
     image: mysql
@@ -27,12 +30,19 @@ services:
     ports: 
       - 3306:3306
     command: --init-file /data/application/init.sql
+    networks:
+      - service-network
 
   phpmyadmin:
     image: phpmyadmin
     restart: always
     ports: 
       - 8082:80
+    networks:
+      - testing-network
+      - service-network
 
-# networks:
-#   docker_network
+networks:
+  service-network:
+  testing-network:
+    name: testing-network-global
