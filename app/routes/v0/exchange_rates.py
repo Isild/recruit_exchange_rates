@@ -38,7 +38,7 @@ def index_exchange_rate_grouped(page: int = 1, limit: int = 100, search: str = N
         date_from = today
 
     if date_to > today:
-        date_from = today
+        date_to = today
 
     return controller.index(page=page, limit=limit, search=search, date_from=date_from, date_to=date_to, order_by=order_by, last_hour=last_hour)
 
