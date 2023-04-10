@@ -4,11 +4,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
 import time
 from decouple import config
+from sqlalchemy import event
 
 from .database import Base, engine
 from .config import cors
 from .routes.v0 import exchange_rates
 from .jobs import get_exchange_rates_job
+from .models.exchange_rate_model import ExchangeRateModel
+from .helpers.db_seeders import initialize_table
+
+
+event.listen(ExchangeRateModel.__table__, 'after_create', initialize_table)
 
 Base.metadata.create_all(bind=engine)
 

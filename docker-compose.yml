@@ -32,7 +32,7 @@ services:
     command: --init-file /data/application/init.sql
     networks:
       - service-network
-
+ 
   phpmyadmin:
     image: phpmyadmin
     restart: always
@@ -41,6 +41,8 @@ services:
     networks:
       - testing-network
       - service-network
+    depends_on:
+      - db
 
 networks:
   service-network:
