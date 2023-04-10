@@ -3,17 +3,14 @@
 ## First step
 
 Copy `.env.example` file into `.env` file and complete variables.
-To db variable you need MySQL ip with port. Also you must manually create new database.
-
-## How DB
-
-MySQL database runs in docker container with comand below:
+If you run application locally you need db variable for MySQL ip with port. Also you must manually create new database and have running MySQL server.
+Also you must add enviromental variable to `.env` file with correct credentials.
 
 ```
-docker-compose up --build
+DATABASE_URL=mysql+pymysql://user_name:password@db_host:db_port/db_name?charset=utf8mb4
 ```
 
-## How run application
+## How run application locally
 
 Run command
 
@@ -29,3 +26,17 @@ Application runs with CORS for origins below which you can change in `cors.py` i
 "http://127.0.0.1",
 "http://127.0.0.1:8080",
 ```
+
+### Requirements
+
+Needed requirements are store in requirements.txt file
+
+## Docker
+
+Application can be run by docker application with command below:
+
+```
+docker-compose up --build
+```
+
+Also database build in container so backend application is ready out of the box.
